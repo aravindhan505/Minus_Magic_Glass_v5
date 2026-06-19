@@ -33,7 +33,7 @@ export type MinuPose = keyof typeof minuPoses
 export const introVideo = {
   // Add your file at public/Intro.mp4 — falls back to a poster + skip if missing.
   // Bump ?v= when you replace the file so browsers fetch the new video.
-  src: "/Intro.mp4?v=20260619",
+  src: "/Intro.mp4?v=20260619b",
   poster: "/minu/minu_waving.png",
   // Auto-advance to home after this many seconds even if the video can't load.
   fallbackSeconds: 60,
