@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { LevelSlider } from "@/components/ui/slider"
 import { ColorLens } from "@/components/level-2-color-lens"
 import { LevelQuiz } from "@/components/level-quiz"
+import { Level5PartBridge } from "@/components/level-5-part-bridge"
 import { MinuAvatar } from "@/components/minu-avatar"
 import { MinuSpaceship } from "@/components/minu-spaceship"
 import { SpeechBubble } from "@/components/speech-bubble"
@@ -15,12 +16,19 @@ import { playClick, playError, playFanfare } from "@/lib/audio"
 import type { LevelActivityProps } from "@/lib/level-data"
 import type { MinuPose } from "@/lib/minu-config"
 import {
+  LEVEL2_HINT_AUDIO,
+  LEVEL2_QUIZ_QUESTION_AUDIO,
+  playLevel2Narrator,
+  playLevel2Then,
+} from "@/lib/level2-audio"
+import {
   COLOR_MATCH_TOLERANCE,
   DEFAULT_MIX_COLOR,
   LEVEL2_QUIZ,
   LEVEL2_ROUNDS_REQUIRED,
   colorsMatch,
   formatItemName,
+  getChannelAdjustments,
   getProgressiveHint,
   getRandomLevel2Rounds,
   type ColorChannel,
@@ -29,12 +37,15 @@ import {
 } from "@/lib/level2-color-potion"
 import { cn } from "@/lib/utils"
 
-type Phase = "activity" | "reveal" | "quiz"
+type Phase = "intro-bridge" | "activity" | "reveal" | "quiz-bridge" | "quiz"
+
+const IDLE_REMINDER_MS = 10_000
 
 export default function Level2BrightnessInColor({ onComplete, onBack }: LevelActivityProps) {
-  const [phase, setPhase] = useState<Phase>("activity")
+  const [phase, setPhase] = useState<Phase>("intro-bridge")
   const [roundIndex, setRoundIndex] = useState(0)
   const [quizKey, setQuizKey] = useState(0)
+  const [quizIntroDone, setQuizIntroDone] = useState(false)
   const [runKey] = useState(() => Date.now())
 
   const rounds = useMemo(() => getRandomLevel2Rounds(LEVEL2_ROUNDS_REQUIRED), [runKey])
@@ -50,6 +61,24 @@ export default function Level2BrightnessInColor({ onComplete, onBack }: LevelAct
   const [highlightChannels, setHighlightChannels] = useState<ColorChannel[]>([])
   const mixingTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const hintTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const roundNarratorPlayed = useRef(-1)
+  const revealNarratorPlayed = useRef(false)
+
+  const clearIdleTimer = useCallback(() => {
+    if (idleTimer.current) {
+      clearTimeout(idleTimer.current)
+      idleTimer.current = null
+    }
+  }, [])
+
+  const scheduleIdleReminder = useCallback(() => {
+    clearIdleTimer()
+    if (phase !== "activity") return
+    idleTimer.current = setTimeout(() => {
+      playLevel2Narrator("narrator_level2_reminder.mp3")
+    }, IDLE_REMINDER_MS)
+  }, [phase, clearIdleTimer])
 
   const resetMix = useCallback(() => {
     setGuessColor(DEFAULT_MIX_COLOR)
@@ -59,23 +88,79 @@ export default function Level2BrightnessInColor({ onComplete, onBack }: LevelAct
     setStatusText(
       `Round ${roundIndex + 1}: Match the target color to reveal the hidden object!`,
     )
-  }, [roundIndex])
+    scheduleIdleReminder()
+  }, [roundIndex, scheduleIdleReminder])
 
   useEffect(() => {
     if (phase === "activity") resetMix()
   }, [phase, roundIndex, resetMix])
 
-  const handleSliderChange = useCallback((id: string, value: number) => {
-    playClick()
-    setGuessColor((prev) => ({ ...prev, [id]: value }))
-    setMinuPose("thinking")
-    setHighlightChannels((prev) => prev.filter((c) => c !== id))
-    if (mixingTimer.current) clearTimeout(mixingTimer.current)
-    mixingTimer.current = setTimeout(() => setMinuPose("pointing"), 600)
+  useEffect(() => {
+    if (phase !== "activity" || !round) return
+
+    if (roundNarratorPlayed.current === roundIndex) return
+    roundNarratorPlayed.current = roundIndex
+    const clip =
+      roundIndex === 0
+        ? "narrator_level2_activity_intro.mp3"
+        : "narrator_level2_round_start.mp3"
+    playLevel2Narrator(clip)
+    scheduleIdleReminder()
+  }, [phase, roundIndex, round, scheduleIdleReminder])
+
+  useEffect(() => {
+    if (phase !== "reveal") {
+      revealNarratorPlayed.current = false
+      return
+    }
+    if (revealNarratorPlayed.current) return
+    revealNarratorPlayed.current = true
+    playLevel2Narrator("narrator_level2_reveal.mp3")
+  }, [phase])
+
+  useEffect(() => () => clearIdleTimer(), [clearIdleTimer])
+
+  const handleIntroBridgeReady = useCallback(() => {
+    setPhase("activity")
   }, [])
+
+  const handleQuizBridgeReady = useCallback(() => {
+    setQuizIntroDone(true)
+    setPhase("quiz")
+  }, [])
+
+  const handleQuizQuestionStart = useCallback((questionIndex: number) => {
+    const clip = LEVEL2_QUIZ_QUESTION_AUDIO[questionIndex]
+    if (clip) playLevel2Narrator(clip)
+  }, [])
+
+  const handleQuizPass = useCallback(() => {
+    playLevel2Narrator("narrator_level2_quiz_pass.mp3")
+  }, [])
+
+  const handleQuizFail = useCallback(() => {
+    playLevel2Narrator("narrator_level2_quiz_fail.mp3")
+  }, [])
+
+  const handleSliderChange = useCallback(
+    (id: string, value: number) => {
+      playClick()
+      clearIdleTimer()
+      setGuessColor((prev) => ({ ...prev, [id]: value }))
+      setMinuPose("thinking")
+      setHighlightChannels((prev) => prev.filter((c) => c !== id))
+      if (mixingTimer.current) clearTimeout(mixingTimer.current)
+      mixingTimer.current = setTimeout(() => {
+        setMinuPose("pointing")
+        scheduleIdleReminder()
+      }, 600)
+    },
+    [clearIdleTimer, scheduleIdleReminder],
+  )
 
   const handleHint = useCallback(() => {
     playClick()
+    clearIdleTimer()
     const nextLevel = hintLevel + 1
     setHintLevel(nextLevel)
     setMinuPose("thinking")
@@ -86,48 +171,99 @@ export default function Level2BrightnessInColor({ onComplete, onBack }: LevelAct
     )
     setStatusText(message)
     setHighlightChannels(channels)
+
+    const hintClip = LEVEL2_HINT_AUDIO[Math.min(nextLevel - 1, LEVEL2_HINT_AUDIO.length - 1)]
+    if (hintClip) playLevel2Narrator(hintClip)
+
     if (hintTimer.current) clearTimeout(hintTimer.current)
     hintTimer.current = setTimeout(() => {
       setHighlightChannels([])
       setMinuPose("pointing")
+      scheduleIdleReminder()
     }, 4500)
-  }, [hintLevel, round.target, guessColor])
+  }, [hintLevel, round.target, guessColor, clearIdleTimer, scheduleIdleReminder])
 
   const handleCheckMatch = useCallback(() => {
     playClick()
+    clearIdleTimer()
     const matched = colorsMatch(round.target, guessColor, COLOR_MATCH_TOLERANCE)
 
     if (matched) {
       playFanfare()
       setMinuPose("celebrating")
       setStatusText(`Perfect mix! You revealed a ${formatItemName(round.item.name)}!`)
-      setPhase("reveal")
+      playLevel2Then("narrator_level2_match_success.mp3", () => setPhase("reveal"))
       return
     }
 
     playError()
     setMinuPose("oops")
     setWobble(true)
-    const { message, highlightChannels: channels } = getProgressiveHint(
-      round.target,
-      guessColor,
-      2,
-    )
-    setStatusText(`Almost! ${message}`)
-    setHighlightChannels(channels)
+    const off = getChannelAdjustments(round.target, guessColor, 12)
+    const veryClose = off.length === 0
+
+    if (veryClose) {
+      playLevel2Narrator("narrator_level2_hint_close.mp3")
+      setStatusText("So close! Tiny tweaks — nudge a slider a little, then Check Match!")
+    } else {
+      playLevel2Narrator("narrator_level2_match_miss.mp3")
+      const { message, highlightChannels: channels } = getProgressiveHint(
+        round.target,
+        guessColor,
+        2,
+      )
+      setStatusText(`Almost! ${message}`)
+      setHighlightChannels(channels)
+    }
+
     setTimeout(() => setWobble(false), 550)
-  }, [round, guessColor])
+    scheduleIdleReminder()
+  }, [round, guessColor, clearIdleTimer, scheduleIdleReminder])
 
   const handleRevealContinue = useCallback(() => {
     playClick()
     if (roundIndex < rounds.length - 1) {
+      playLevel2Narrator("narrator_level2_reveal_continue.mp3")
       setRoundIndex((i) => i + 1)
-      resetMix()
       setPhase("activity")
       return
     }
-    setPhase("quiz")
-  }, [roundIndex, rounds.length, resetMix])
+    playLevel2Then("narrator_level2_all_rounds_done.mp3", () => setPhase("quiz-bridge"))
+  }, [roundIndex, rounds.length])
+
+  if (phase === "intro-bridge") {
+    return (
+      <Level5PartBridge
+        key="l2-intro-bridge"
+        levelBadge="Level 2 · Color Potion Time"
+        partLabel="Welcome"
+        title="Color Potion Time!"
+        tagline="Mix Red, Green & Blue potions to match the magic lenses and reveal hidden objects!"
+        narratorFile="narrator_level2_intro.mp3"
+        accentClass="border-chart-1/50 shadow-chart-1/25"
+        minuPose="waving"
+        playThen={playLevel2Then}
+        onReady={handleIntroBridgeReady}
+      />
+    )
+  }
+
+  if (phase === "quiz-bridge") {
+    return (
+      <Level5PartBridge
+        key="l2-quiz-bridge"
+        levelBadge="Level 2 · Color Potion Time"
+        partLabel="Final Challenge"
+        title="Color Potion Quiz"
+        tagline="Three hands-on RGB challenges — get all three right to calibrate Minu's color lens!"
+        narratorFile="narrator_level2_quiz_intro.mp3"
+        accentClass="border-accent/50 shadow-accent/25"
+        minuPose="thinking"
+        playThen={playLevel2Then}
+        onReady={handleQuizBridgeReady}
+      />
+    )
+  }
 
   if (phase === "quiz") {
     return (
@@ -159,6 +295,10 @@ export default function Level2BrightnessInColor({ onComplete, onBack }: LevelAct
             key={quizKey}
             questions={LEVEL2_QUIZ}
             compact
+            questionNarratorEnabled={quizIntroDone}
+            onQuestionStart={handleQuizQuestionStart}
+            onPass={handleQuizPass}
+            onQuizFail={handleQuizFail}
             successMessage="Amazing! You mastered Red, Green, and Blue mixing!"
             onComplete={() => {
               playFanfare()
@@ -250,7 +390,6 @@ export default function Level2BrightnessInColor({ onComplete, onBack }: LevelAct
       </header>
 
       <div className="relative z-10 grid min-h-0 flex-1 grid-cols-1 gap-2 overflow-hidden px-2 py-2 sm:gap-3 sm:px-4 md:grid-cols-12 md:py-3">
-        {/* Left — Minu + mission */}
         <section className="flex min-h-0 flex-col gap-1.5 md:col-span-5">
           <div className="shrink-0 rounded-xl border border-primary/30 bg-card/70 px-3 py-2">
             <p className="font-heading text-[11px] font-bold leading-snug text-foreground sm:text-sm">
@@ -281,7 +420,6 @@ export default function Level2BrightnessInColor({ onComplete, onBack }: LevelAct
           </div>
         </section>
 
-        {/* Right — lenses + sliders */}
         <section className="flex min-h-0 flex-col gap-2 overflow-hidden md:col-span-7 md:border-l md:border-primary/15 md:pl-4">
           <p className="shrink-0 text-center font-heading text-[9px] font-bold text-muted-foreground uppercase sm:text-[10px]">
             Align both magic lenses, then tap Check Match!

@@ -31,8 +31,8 @@ const Level5 = lazy(() => import("@/components/level-5-image-classification"))
  */
 export function LevelScreen({ level, onBack, onComplete }: LevelScreenProps) {
   useEffect(() => {
-    // Level 5 intro is chained inside the Level 5 module (avoids cutting off part1 intro).
-    if (level.id === 5) return () => stopNarrator()
+    // Level 2/5 intros are chained inside each module (bridge screens + narrator timing).
+    if (level.id === 2 || level.id === 5) return () => stopNarrator()
     const introFile = LEVEL_INTRO_FILES[level.id]
     if (introFile) playNarratorFile(introFile)
     return () => stopNarrator()

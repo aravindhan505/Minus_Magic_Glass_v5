@@ -13,8 +13,11 @@ type Level5PartBridgeProps = {
   title: string
   tagline?: string
   narratorFile: string
+  levelBadge?: string
   accentClass?: string
   minuPose?: MinuPose
+  /** Defaults to playLevel5Then — pass playLevel2Then for Level 2 bridges. */
+  playThen?: (filename: string, next: () => void) => void
   onReady: () => void
 }
 
@@ -27,17 +30,20 @@ export function Level5PartBridge({
   title,
   tagline,
   narratorFile,
+  levelBadge = "Level 5 · Final Planet",
   accentClass = "border-primary/50 shadow-primary/25",
   minuPose = "waving",
+  playThen = playLevel5Then,
   onReady,
 }: Level5PartBridgeProps) {
-  const started = useRef(false)
+  // Track per clip — React reuses this component when back-to-back bridges share one tree slot (Level 2).
+  const playedFile = useRef<string | null>(null)
 
   useEffect(() => {
-    if (started.current) return
-    started.current = true
-    playLevel5Then(narratorFile, onReady)
-  }, [narratorFile, onReady])
+    if (playedFile.current === narratorFile) return
+    playedFile.current = narratorFile
+    playThen(narratorFile, onReady)
+  }, [narratorFile, onReady, playThen])
 
   return (
     <main className="relative flex h-dvh max-h-dvh flex-col items-center justify-center overflow-hidden bg-background px-4">
@@ -54,7 +60,7 @@ export function Level5PartBridge({
         )}
       >
         <span className="font-heading rounded-full border border-secondary/40 bg-secondary/15 px-4 py-1 text-[10px] font-bold tracking-[0.2em] text-secondary uppercase sm:text-xs">
-          Level 5 · Final Planet
+          {levelBadge}
         </span>
 
         <div className="flex flex-col gap-1">

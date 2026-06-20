@@ -1,7 +1,7 @@
 # Minu's Magic Glasses — Project Status & Session Tracker
 
-**Last Updated:** June 19, 2026
-**Last Session:** Pushed to GitHub `aravindhan505/Minus_Magic_Glass_v4` (commit 687a13b)
+**Last Updated:** June 20, 2026
+**Last Session:** Pushed to GitHub `aravindhan505/Minus_Magic_Glass_v5` — Level 2 audio (19 MP3s), reveal spec, Vercel LFS fix
 
 ---
 
@@ -69,7 +69,8 @@ This is the **single source of truth** for project status. If a session terminat
 | Quiz correct/incorrect narrator | ✅ Done | `level-quiz.tsx` — alternates between 2 clips randomly |
 | Level complete narrator | ✅ Done | `page.tsx` — waits for MP3 `onEnd` before returning to map (15s fallback) |
 | All levels complete narrator | ✅ Done | `page.tsx` — plays when all 5 levels done |
-| Narrator audio files wired (42/58) | ✅ Done | 11 shared `audio/minu/` + 31 Level 5 `audio/level_5/` |
+| Narrator audio files wired (61/58) | ✅ Done | 11 shared `audio/minu/` + 31 L5 + 19 L2 |
+| Level 2 narrator triggers | ✅ Done | `playLevel2Narrator()` — bridges, rounds, hints, reveal, quiz |
 | Level 5 narrator triggers | ✅ Done | `playLevel5Narrator()` — intro chain, rounds, hints, hierarchy, quiz |
 | Planet name narrator (5 clips) | ✅ Done | `public/audio/planets/*.mp3` — plays on Planet Map navigation |
 | Level complete timeout fix | ✅ Done | Replaced fixed timeout with `playNarratorFile({ onEnd })` so audio never cuts off |
@@ -128,14 +129,19 @@ This is the **single source of truth** for project status. If a session terminat
 | Final RGB quiz (3 hands-on Qs) | ✅ Done | `LEVEL2_QUIZ` in `lib/level2-color-potion.ts` |
 | Item assets (100 PNGs) | ✅ Done | `public/images/level2/items/` — 50 silhouette + 50 revealed |
 | Wired in level-screen | ✅ Done | Lazy-loaded like Level 5 |
+| **Level 2 narrator audio (19 MP3s)** | ✅ Done | `public/audio/level_2/` — all clips from `level2_assets/level2audio.txt` |
+| Level 2 audio triggers wired | ✅ Done | `lib/level2-audio.ts` + `playLevel2Then()` chains |
+| Level 2 bridge screens | ✅ Done | Intro + Quiz Time bridges; `activity_intro` plays on round 1 start |
+| Level 2 audio timing (no cutoffs) | ✅ Done | Match success / all-rounds-done wait for narrator before phase change |
 
-**Level 2 flow:** 3 potion-matching rounds → reveal each item → RGB hands-on quiz (80% pass) → level complete
+**Level 2 flow:** Intro bridge → 3 potion rounds (`activity_intro` on round 1, `round_start` on 2–3) → Quiz bridge → RGB hands-on quiz (80% pass) → level complete
 
 **Files:**
 - `lib/level2-color-potion.ts` — 50 items, target colors, hints, quiz pool
+- `lib/level2-audio.ts` — Level 2 narrator path + hint/quiz maps + `playLevel2Narrator()`
 - `components/level-2-color-lens.tsx` — circular lens UI with slosh animation
-- `components/level-2-brightness-in-color.tsx` — full level orchestrator
-- `components/level-screen.tsx` — routes `level.id === 2` to Level 2 module
+- `components/level-2-brightness-in-color.tsx` — full level orchestrator + L2 audio
+- `components/level-screen.tsx` — routes `level.id === 2` to Level 2 module (intro handled in module)
 
 ### Level 5: Object Detection — Two Parts + CV Quiz 🟡 IN PROGRESS (June 18)
 | Feature | Status | Notes |
@@ -248,9 +254,9 @@ Each teammate builds ONE level module independently.
 
 ## 3. What We're Waiting For
 
-### 🎵 Audio MP3 Files (58 files in minu-dialogues + 31 Level 5 specific)
-**Waiting on:** User (you) — Level 2 audio next (`level2_assets/level2audio.txt`)
-**Status:** 🟡 42/58 global narrator files wired — Level 5 complete (31/31). 16 global + 30 Minu remaining.
+### 🎵 Audio MP3 Files (58 files in minu-dialogues + level-specific packs)
+**Waiting on:** User (you) — Level 1/3/4 narrator packs + 30 Minu reaction files
+**Status:** 🟡 Level 2 complete (19/19). Level 5 complete (31/31). 11 shared wired. 16 global + 30 Minu remaining.
 
 **Shared files (`public/audio/minu/`) — 11 wired:**
 ```
@@ -274,9 +280,14 @@ public/audio/minu/
 - Helper: `lib/level5-audio.ts` → `playLevel5Narrator()`
 - Optional 6 Minu L5 reactions: skipped by user
 
+**Level 2 files (`public/audio/level_2/`) — 19/19 received and wired ✅**
+- Spec: `level2_assets/level2audio.txt`
+- User path: `G:\Cursor\FreeBuff\minu-s-magic-glasses\public\audio\level_2\`
+- Helper: `lib/level2-audio.ts` → `playLevel2Narrator()` / `playLevel2Then()`
+- Optional 4 Minu L2 reactions: not generated (skipped)
+
 **Files still needed (16 narrator + 30 Minu):**
-- Level 1–4 intro/instruction/quiz narrator files (see `minu-dialogues.txt`)
-- Level 2 narrator pack (20 files — see `level2_assets/level2audio.txt`)
+- Level 1, 3, 4 intro/instruction/quiz narrator files (see `minu-dialogues.txt`)
 - 30 Minu reaction files + 5 idle/special (see `minu-dialogues.txt` Sections 5–6)
 
 **File naming convention:**

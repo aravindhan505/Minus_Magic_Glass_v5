@@ -29,8 +29,8 @@ type LevelQuizProps = {
   passPercent?: number
   /** Custom success message on pass screen */
   successMessage?: string
-  /** Optional narrator when a new question appears */
-  onQuestionStart?: () => void
+  /** Optional narrator when a new question appears (receives 0-based question index). */
+  onQuestionStart?: (questionIndex: number) => void
   /** Gate question narrator (e.g. wait for quiz intro to finish) */
   questionNarratorEnabled?: boolean
   /** Optional narrator when the pass results screen shows */
@@ -84,7 +84,7 @@ export function LevelQuiz({
     if (allDone || !questionNarratorEnabled) return
     if (questionNarratorForQ.current === currentQ) return
     questionNarratorForQ.current = currentQ
-    onQuestionStartRef.current?.()
+    onQuestionStartRef.current?.(currentQ)
   }, [currentQ, allDone, questionNarratorEnabled])
 
   useEffect(() => {

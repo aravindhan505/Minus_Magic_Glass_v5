@@ -1,0 +1,375 @@
+# Level 2: Color Potion Time — Per-Item Reveal Narrator Guide
+# ===========================================================
+# Project: Minu's Magic Glasses
+# Planet: Color Potion Time! (Level 2)
+#
+# PURPOSE
+# ───────
+# One narrator line per hidden collectible — spoken on the Magic Reveal screen
+# when that item is unlocked. Names the object out loud (e.g. "It's a dinosaur!")
+# so kids hear the reveal even if they can't read the on-screen title yet.
+#
+# CURRENT BEHAVIOUR (until these files exist)
+# ─────────────────────────────────────────────
+# App still plays the generic clip:
+#   narrator_level2_reveal.mp3
+#   ("Magic reveal! You mixed the perfect potion! Look what was hiding…")
+# UI still shows: "It's a [Item Name]!" on screen.
+#
+# FUTURE BEHAVIOUR (after you generate + place files)
+# ───────────────────────────────────────────────────
+# Dev will wire: play item-specific clip when reveal screen mounts;
+# fall back to narrator_level2_reveal.mp3 if the file for that round's item is missing.
+#
+# VOICE DIRECTION (same as level2audio.txt)
+# ─────────────────────────────────────────
+# NARRATOR: Warm, friendly adult (PBS / Blue's Clues host)
+#   - Clear, slightly slow pace for ages 5–8
+#   - Short burst of delight — 2–5 seconds per clip
+#   - Say the item name clearly; use "a" or "an" naturally
+#
+# GENERATION SETTINGS
+# ───────────────────
+# Format: MP3, 44.1 kHz
+# Normalize peak: -3 dB
+# Match volume of other Level 2 narrator files
+#
+# WHERE TO PUT FILES
+# ──────────────────
+# public/audio/level_2/reveal/
+#
+# FILE NAMING
+# ───────────
+# narrator_level2_reveal_<item-slug>.mp3
+# <item-slug> matches POTION_ITEMS[].name in lib/level2-color-potion.ts
+# Example: dinosaur → narrator_level2_reveal_dinosaur.mp3
+#
+# TOTAL FILES TO GENERATE: 50
+# ===========================================================
+
+
+# ============================================================
+# REVEAL LINES — 50 collectibles (id order = level2-color-potion.ts)
+# ============================================================
+
+narrator_level2_reveal_strawberry.mp3
+  Item: Strawberry (id 1)
+  Text: "Magic reveal! It's a strawberry!"
+  Emotion: Sweet, delighted
+
+narrator_level2_reveal_frog.mp3
+  Item: Frog (id 2)
+  Text: "Look! It's a little frog!"
+  Emotion: Playful surprise
+
+narrator_level2_reveal_whale.mp3
+  Item: Whale (id 3)
+  Text: "Wow — it's a whale!"
+  Emotion: Amazed, gentle
+
+narrator_level2_reveal_rubber-duck.mp3
+  Item: Rubber Duck (id 4)
+  Text: "Squeak! It's a rubber duck!"
+  Emotion: Cheerful, silly
+
+narrator_level2_reveal_ice-cube.mp3
+  Item: Ice Cube (id 5)
+  Text: "Brr! It's an ice cube!"
+  Emotion: Light, cool surprise
+
+narrator_level2_reveal_jellyfish.mp3
+  Item: Jellyfish (id 6)
+  Text: "Floating in the lens — it's a jellyfish!"
+  Emotion: Wonder, soft
+
+narrator_level2_reveal_pumpkin.mp3
+  Item: Pumpkin (id 7)
+  Text: "Orange and round — it's a pumpkin!"
+  Emotion: Warm, festive
+
+narrator_level2_reveal_grapes.mp3
+  Item: Grapes (id 8)
+  Text: "A whole bunch — it's grapes!"
+  Emotion: Happy discovery
+
+narrator_level2_reveal_teddy-bear.mp3
+  Item: Teddy Bear (id 9)
+  Text: "Aww! It's a teddy bear!"
+  Emotion: Cozy, affectionate
+
+narrator_level2_reveal_cloud.mp3
+  Item: Cloud (id 10)
+  Text: "Fluffy! It's a cloud!"
+  Emotion: Dreamy, light
+
+narrator_level2_reveal_apple.mp3
+  Item: Apple (id 11)
+  Text: "Crunch time — it's an apple!"
+  Emotion: Bright, crisp
+
+narrator_level2_reveal_banana.mp3
+  Item: Banana (id 12)
+  Text: "Peel back the color — it's a banana!"
+  Emotion: Silly, upbeat
+
+narrator_level2_reveal_carrot.mp3
+  Item: Carrot (id 13)
+  Text: "Orange and crunchy — it's a carrot!"
+  Emotion: Encouraging, healthy vibe
+
+narrator_level2_reveal_firetruck.mp3
+  Item: Firetruck (id 14)
+  Text: "Neenaaw! It's a firetruck!"
+  Emotion: Excited, heroic
+
+narrator_level2_reveal_turtle.mp3
+  Item: Turtle (id 15)
+  Text: "Slow and steady — it's a turtle!"
+  Emotion: Calm delight
+
+narrator_level2_reveal_dolphin.mp3
+  Item: Dolphin (id 16)
+  Text: "Splash! It's a dolphin!"
+  Emotion: Joyful, energetic
+
+narrator_level2_reveal_star.mp3
+  Item: Star (id 17)
+  Text: "Shining bright — it's a star!"
+  Emotion: Magical, proud
+
+narrator_level2_reveal_diamond.mp3
+  Item: Diamond (id 18)
+  Text: "Sparkle! It's a diamond!"
+  Emotion: Dazzled, impressed
+
+narrator_level2_reveal_octopus.mp3
+  Item: Octopus (id 19)
+  Text: "Eight arms! It's an octopus!"
+  Emotion: Curious, fun
+
+narrator_level2_reveal_cookie.mp3
+  Item: Cookie (id 20)
+  Text: "Yum! It's a cookie!"
+  Emotion: Treat-time happiness
+
+narrator_level2_reveal_rocket-ship.mp3
+  Item: Rocket Ship (id 21)
+  Text: "Three, two, one — it's a rocket ship!"
+  Emotion: Launch excitement
+
+narrator_level2_reveal_school-bus.mp3
+  Item: School Bus (id 22)
+  Text: "Beep beep! It's a school bus!"
+  Emotion: Bouncy, friendly
+
+narrator_level2_reveal_butterfly.mp3
+  Item: Butterfly (id 23)
+  Text: "Flutter by — it's a butterfly!"
+  Emotion: Gentle wonder
+
+narrator_level2_reveal_ladybug.mp3
+  Item: Ladybug (id 24)
+  Text: "Little spots! It's a ladybug!"
+  Emotion: Cute surprise
+
+narrator_level2_reveal_sunflower.mp3
+  Item: Sunflower (id 25)
+  Text: "Sunny petals — it's a sunflower!"
+  Emotion: Warm, bright
+
+narrator_level2_reveal_penguin.mp3
+  Item: Penguin (id 26)
+  Text: "Waddle waddle — it's a penguin!"
+  Emotion: Adorable, playful
+
+narrator_level2_reveal_snowman.mp3
+  Item: Snowman (id 27)
+  Text: "Brrrilliant! It's a snowman!"
+  Emotion: Winter cheer
+
+narrator_level2_reveal_umbrella.mp3
+  Item: Umbrella (id 28)
+  Text: "Rain ready — it's an umbrella!"
+  Emotion: Practical, cheerful
+
+narrator_level2_reveal_balloon.mp3
+  Item: Balloon (id 29)
+  Text: "Up it goes — it's a balloon!"
+  Emotion: Light, celebratory
+
+narrator_level2_reveal_kite.mp3
+  Item: Kite (id 30)
+  Text: "Catch the wind — it's a kite!"
+  Emotion: Airy excitement
+
+narrator_level2_reveal_soccer-ball.mp3
+  Item: Soccer Ball (id 31)
+  Text: "Goal! It's a soccer ball!"
+  Emotion: Sporty, pumped
+
+narrator_level2_reveal_tree.mp3
+  Item: Tree (id 32)
+  Text: "Growing tall — it's a tree!"
+  Emotion: Calm, nature pride
+
+narrator_level2_reveal_mushroom.mp3
+  Item: Mushroom (id 33)
+  Text: "Pop! It's a mushroom!"
+  Emotion: Forest-fairy whimsy
+
+narrator_level2_reveal_snail.mp3
+  Item: Snail (id 34)
+  Text: "Slow poke! It's a snail!"
+  Emotion: Gentle teasing, kind
+
+narrator_level2_reveal_crown.mp3
+  Item: Crown (id 35)
+  Text: "Royal reveal — it's a crown!"
+  Emotion: Regal, celebratory
+
+narrator_level2_reveal_watermelon-slice.mp3
+  Item: Watermelon Slice (id 36)
+  Text: "Juicy! It's a watermelon slice!"
+  Emotion: Summer happy
+
+narrator_level2_reveal_guitar.mp3
+  Item: Guitar (id 37)
+  Text: "Strum! It's a guitar!"
+  Emotion: Musical, upbeat
+
+narrator_level2_reveal_ice-cream-cone.mp3
+  Item: Ice Cream Cone (id 38)
+  Text: "Scoop of magic — it's an ice cream cone!"
+  Emotion: Sweet treat joy
+
+narrator_level2_reveal_cupcake.mp3
+  Item: Cupcake (id 39)
+  Text: "Frosting and fun — it's a cupcake!"
+  Emotion: Party sparkle
+
+narrator_level2_reveal_gift-box.mp3
+  Item: Gift Box (id 40)
+  Text: "Surprise inside — it's a gift box!"
+  Emotion: Gift-giving delight
+
+narrator_level2_reveal_bell.mp3
+  Item: Bell (id 41)
+  Text: "Ding ding! It's a bell!"
+  Emotion: Clear, ringing cheer
+
+narrator_level2_reveal_key.mp3
+  Item: Key (id 42)
+  Text: "You unlocked it — it's a key!"
+  Emotion: Mystery solved
+
+narrator_level2_reveal_horseshoe-magnet.mp3
+  Item: Horseshoe Magnet (id 43)
+  Text: "Click! It's a horseshoe magnet!"
+  Emotion: Science-y fun
+
+narrator_level2_reveal_magic-wand.mp3
+  Item: Magic Wand (id 44)
+  Text: "Poof! It's a magic wand!"
+  Emotion: Enchanted, sparkly
+
+narrator_level2_reveal_treasure-chest.mp3
+  Item: Treasure Chest (id 45)
+  Text: "X marks the spot — it's a treasure chest!"
+  Emotion: Adventure payoff
+
+narrator_level2_reveal_anchor.mp3
+  Item: Anchor (id 46)
+  Text: "Ahoy! It's an anchor!"
+  Emotion: Nautical pride
+
+narrator_level2_reveal_sailboat.mp3
+  Item: Sailboat (id 47)
+  Text: "Set sail — it's a sailboat!"
+  Emotion: Breezy adventure
+
+narrator_level2_reveal_hot-air-balloon.mp3
+  Item: Hot Air Balloon (id 48)
+  Text: "Up, up, up — it's a hot air balloon!"
+  Emotion: Sky-high wonder
+
+narrator_level2_reveal_teapot.mp3
+  Item: Teapot (id 49)
+  Text: "Time for tea — it's a teapot!"
+  Emotion: Cozy, polite
+
+narrator_level2_reveal_dinosaur.mp3
+  Item: Dinosaur (id 50)
+  Text: "Roar! It's a dinosaur!"
+  Emotion: Big, joyful surprise
+
+
+# ============================================================
+# DEV WIRING NOTES (for when files are ready)
+# ============================================================
+#
+# Lookup key: round.item.name (slug string, e.g. "dinosaur")
+# Path: /audio/level_2/reveal/narrator_level2_reveal_<slug>.mp3
+# Fallback: narrator_level2_reveal.mp3 (generic — keep in public/audio/level_2/)
+#
+# Example helper (future):
+#   revealAudioForItem(item.name) → `narrator_level2_reveal_${item.name}.mp3`
+#
+# After placing files, tell the dev:
+# "I've placed the Level 2 reveal MP3s in public/audio/level_2/reveal/"
+#
+# ============================================================
+# QUICK CHECKLIST — 50 reveal files
+# ============================================================
+#
+# [ ] narrator_level2_reveal_strawberry.mp3
+# [ ] narrator_level2_reveal_frog.mp3
+# [ ] narrator_level2_reveal_whale.mp3
+# [ ] narrator_level2_reveal_rubber-duck.mp3
+# [ ] narrator_level2_reveal_ice-cube.mp3
+# [ ] narrator_level2_reveal_jellyfish.mp3
+# [ ] narrator_level2_reveal_pumpkin.mp3
+# [ ] narrator_level2_reveal_grapes.mp3
+# [ ] narrator_level2_reveal_teddy-bear.mp3
+# [ ] narrator_level2_reveal_cloud.mp3
+# [ ] narrator_level2_reveal_apple.mp3
+# [ ] narrator_level2_reveal_banana.mp3
+# [ ] narrator_level2_reveal_carrot.mp3
+# [ ] narrator_level2_reveal_firetruck.mp3
+# [ ] narrator_level2_reveal_turtle.mp3
+# [ ] narrator_level2_reveal_dolphin.mp3
+# [ ] narrator_level2_reveal_star.mp3
+# [ ] narrator_level2_reveal_diamond.mp3
+# [ ] narrator_level2_reveal_octopus.mp3
+# [ ] narrator_level2_reveal_cookie.mp3
+# [ ] narrator_level2_reveal_rocket-ship.mp3
+# [ ] narrator_level2_reveal_school-bus.mp3
+# [ ] narrator_level2_reveal_butterfly.mp3
+# [ ] narrator_level2_reveal_ladybug.mp3
+# [ ] narrator_level2_reveal_sunflower.mp3
+# [ ] narrator_level2_reveal_penguin.mp3
+# [ ] narrator_level2_reveal_snowman.mp3
+# [ ] narrator_level2_reveal_umbrella.mp3
+# [ ] narrator_level2_reveal_balloon.mp3
+# [ ] narrator_level2_reveal_kite.mp3
+# [ ] narrator_level2_reveal_soccer-ball.mp3
+# [ ] narrator_level2_reveal_tree.mp3
+# [ ] narrator_level2_reveal_mushroom.mp3
+# [ ] narrator_level2_reveal_snail.mp3
+# [ ] narrator_level2_reveal_crown.mp3
+# [ ] narrator_level2_reveal_watermelon-slice.mp3
+# [ ] narrator_level2_reveal_guitar.mp3
+# [ ] narrator_level2_reveal_ice-cream-cone.mp3
+# [ ] narrator_level2_reveal_cupcake.mp3
+# [ ] narrator_level2_reveal_gift-box.mp3
+# [ ] narrator_level2_reveal_bell.mp3
+# [ ] narrator_level2_reveal_key.mp3
+# [ ] narrator_level2_reveal_horseshoe-magnet.mp3
+# [ ] narrator_level2_reveal_magic-wand.mp3
+# [ ] narrator_level2_reveal_treasure-chest.mp3
+# [ ] narrator_level2_reveal_anchor.mp3
+# [ ] narrator_level2_reveal_sailboat.mp3
+# [ ] narrator_level2_reveal_hot-air-balloon.mp3
+# [ ] narrator_level2_reveal_teapot.mp3
+# [ ] narrator_level2_reveal_dinosaur.mp3
+#
+# ============================================================

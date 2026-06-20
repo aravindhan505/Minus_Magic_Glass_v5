@@ -202,7 +202,7 @@ export default function Level5ObjectDetection({ onComplete, onBack }: LevelActiv
     playRoundClip()
   }, [phase, roundIndex, round])
 
-  const handleQuizQuestionStart = useCallback(() => {
+  const handleQuizQuestionStart = useCallback((_questionIndex: number) => {
     playLevel5Narrator("narrator_level5_quiz_question.mp3")
   }, [])
 
