@@ -13,6 +13,13 @@ import { cn } from "@/lib/utils"
 
 const QUIZ_PASS_PERCENT = 80
 
+/** RGB potion slider colors (Level 2 hands-on quiz). */
+const RGB_SLIDER_COLORS: Record<string, string> = {
+  r: "#ff4444",
+  g: "#44cc44",
+  b: "#4488ff",
+}
+
 type LevelQuizProps = {
   questions: QuizQuestion[]
   /** Called when the quiz is passed (>= threshold correct) */
@@ -347,6 +354,7 @@ export function LevelQuiz({
               min={0}
               max={255}
               value={sliderValues[key] ?? 128}
+              color={RGB_SLIDER_COLORS[key]}
               onChange={(id, val) => setSliderValues((prev) => ({ ...prev, [id]: val }))}
             />
           ))}
